@@ -13,8 +13,12 @@ function Login(props){
                 .then(res=>{
                     let resObj=res.data;
                     if(resObj.message==='login-success'){
+                
                         localStorage.setItem("token",resObj.token)
+                        localStorage.setItem("username",resObj.username)
                         localStorage.setItem("user",JSON.stringify(resObj.userObj))
+                        localStorage.setItem("usertype",credentials.type)
+                        console.log("credentials is",credentials.type)
                         props.setUserLoginStatus(true)
                         if(credentials.type==="user"){
                             history.push(`/userpro/${resObj.username}`)

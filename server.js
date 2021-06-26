@@ -1,6 +1,7 @@
 const exp = require ("express")
 const app  = exp();
 const path = require("path")
+require('dotenv').config()
 
 
 app.use(exp.static(path.join(__dirname,"./build/")))
@@ -11,7 +12,7 @@ const adminApi=require("./APIS/admin-api")
 app.use("/user", userApi)
 app.use("/product", productsApi)
 app.use("/admin",adminApi)
-let dburl="mongodb+srv://cdb21dx003:cdb21dx003@cluster0.qwv7t.mongodb.net/mydatabase?retryWrites=true&w=majority"
+let dburl=process.env.DATABASE_URL
 let databaseObject;
 const mongoClient=require("mongodb").MongoClient
 mongoClient.connect(dburl,{useNewUrlParser:true,useUnifiedTopology:true},(err,client)=>{
@@ -23,10 +24,13 @@ mongoClient.connect(dburl,{useNewUrlParser:true,useUnifiedTopology:true},(err,cl
    let userCollectionObject=databaseObject.collection("userCollection")
    let productCollectionObject=databaseObject.collection("productcollection")
    let adminCollectionObject=databaseObject.collection("admincollection")
+   let userCartCollectionObject=databaseObject.collection("usercartcollection")
 
     app.set("userCollectionObject",userCollectionObject)
     app.set("productCollectionObject",productCollectionObject)
     app.set("adminCollectionObject",adminCollectionObject)
+    app.set("userCartCollectionObject",userCartCollectionObject)
+
     console.log("DB connection success")
   }
 })
@@ -50,5 +54,5 @@ mongoClient.connect(dburl,{useNewUrlParser:true,useUnifiedTopology:true},(err,cl
       res.send({message:err.message})
   })
 
-const port=8080
+const port=process.env.PORT||8080;
 app.listen(port, ()=>console.log(`server is listening on port `))

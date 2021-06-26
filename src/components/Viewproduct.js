@@ -3,9 +3,10 @@ import {useEffect , useState} from 'react'
 import axios from 'axios'
 
 
-function Viewproduct(){
+function Viewproduct(props){
     let paramsObj=useParams();
     let [product,setProduct]=useState([])
+    let [adminoption,setAdminOption]=useState(true)
     console.log("product is", product);
     
     
@@ -26,6 +27,14 @@ function Viewproduct(){
             console.log(err)
             alert("something went wrong")
         })
+
+        let usertype=localStorage.getItem("usertype")
+        if(usertype==="admin"){
+            setAdminOption(true)
+        }
+        else{
+            setAdminOption(false)
+        }
         //get data from local storage
         //let productObj=JSON.parse(localStorage.getItem("user"))
     
@@ -48,6 +57,14 @@ function Viewproduct(){
                                     <h5>Product Type: {element.producttype}</h5>
                                     <h5>DateofManf: {element.dateofmanufacture}</h5>
                                     
+                                         { adminoption ?
+                                         <div> 
+                                             <button className="btn btn-danger float-end">Edit</button>
+                                             <button className="btn btn-danger float-end">Delete</button>
+                                         </div>:
+                                         <button className="btn btn-success float-end" onClick={()=>props.addProductToCart(element)}>Add to cart</button>
+                                        }
+                                   
 
                                 </div>
 

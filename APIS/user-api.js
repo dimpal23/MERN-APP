@@ -40,6 +40,14 @@ const expressErrorHandler=require("express-async-handler")
      let userList=await userCollectionObject.find().toArray()
      res.send({message:userList})
  })
+ //get cart data
+userApi.get("/getcart/:username",expressErrorHandler(async(req,res,next)=>{
+    let userCartCollectionObject=req.app.get("userCartCollectionObject")
+    let un=req.params.username
+    let cartList=await userCartCollectionObject.find({username:un}).toArray()
+    console.log("cart list is",cartList)
+    res.send({message:cartList})
+}))
 //read all users using promise
 /*userApi.get("/getusers", (req, res, next) => {
     userCollectionObject.find().toArray()
@@ -49,6 +57,7 @@ const expressErrorHandler=require("express-async-handler")
         .catch(err => {
             console.log("err in reading user", err)
             res.send({ message: err.message })
+            
         })
 })*/
 
@@ -178,6 +187,30 @@ userApi.get("/getuser/:username",(req,res,next)=>{
         res.send({message:"user created"})
     }
 })*/
+userApi.post("/addtocart",expressErrorHandler(async(req,res,next)=>{
+    let userCartCollectionObject=req.app.get("userCartCollectionObject");
+    let userCartObj=req.body;
+    let userInCart= await userCartCollectionObject.findOne({username:userCartObj.username})
+    if(userInCart===null){
+        let products=[];
+        products.push(userCartObj.productObj)
+        let newUserCartObject={username:userCartObj.username,products:products}
+        console.log(newUserCartObject)
+        await userCartCollectionObject.insertOne(newUserCartObject)
+        res.send({message:"product added to cart"})
+    }
+    else{
+          userInCart.products.push(userCartObj.productObj)
+          //update
+          await userCartCollectionObject.updateOne({username:userCartObj.username},{$set:{...userInCart}})
+          res.send({message:"product addeded to cart"})
+
+    }
+
+}))
+
+
+
 userApi.post("/createusers",multerObj.single('photo'),expressErrorHandler(async(req,res,next)=>{
     let userCollectionObject=req.app.get("userCollectionObject")
     
@@ -260,7 +293,7 @@ userApi.post("/login",async(req,res,next)=>{
         }
         else{
             delete user.password;
-            let token=await jwt.sign({username:credentials.username},'abcdef',{expiresIn:120})
+            let token=await jwt.sign({username:credentials.username},process.env.SECRET,{expiresIn:120})
             res.send({message:"login-success",
             token:token,
             username:credentials.username,

@@ -21,7 +21,7 @@ function App() {
   return (
     <div className="App">
 <BrowserRouter>
-<ul className="nav">
+<ul className="nav bg-dark text-white justify-content-end p-2">
             <li className="nav-item">
             <Link to ="/home" className="nav-link">Home</Link>
             </li>
