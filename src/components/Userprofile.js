@@ -2,7 +2,7 @@ import {useHistory, useParams} from "react-router-dom"
 import { useEffect, useState } from "react";
 import {BrowserRouter, Switch, Link, Route, Redirect} from "react-router-dom"
 import ViewProduct from './Viewproduct'
-import UserCart from "./UserCart";
+import UserCart from './Usercart'
 import axios from "axios";
 
 function Userprofile ( ) {
